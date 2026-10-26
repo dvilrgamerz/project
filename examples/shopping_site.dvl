@@ -1,0 +1,19 @@
+# DVILR V0.5 declarative shopping source — 12 fictional products
+# Build on Windows using: dvl.exe web examples\shopping_site.dvl -o web\index.html
+# Outputs standards-based HTML/CSS/JS. The repo's home page is a separately styled storefront using the same sample catalog.
+website "Everyday objects | DVILR MARKET" {
+    shop "DVILR MARKET"
+    tagline "Thoughtfully designed essentials. Beautiful, useful objects."
+    product "Studio Headphones" "Tech" "headphones" "Immersive sound in a sculptural everyday form." 14900
+    product "Everyday Runner" "Style" "shoe" "A considered silhouette for wherever the day takes you." 12800
+    product "City Weekender" "Accessories" "bag" "Carry less, discover more. Compact by design." 11900
+    product "Arc Table Lamp" "Home" "lamp" "Soft light and sculptural lines, perfectly paired." 8900
+    product "Form 65 Keyboard" "Tech" "keyboard" "Quiet mechanical keys for a focused workspace." 13900
+    product "Analog Camera" "Tech" "camera" "Timeless storytelling in a familiar form." 21500
+    product "Daylight Watch" "Accessories" "watch" "A little more time to do what matters." 15900
+    product "Room Speaker" "Tech" "speaker" "Warm, spacious sound for every room." 17900
+    product "Sunday Sunglasses" "Style" "sunglasses" "The finishing touch to a sun-filled afternoon." 6900
+    product "Morning Ritual Mug" "Home" "mug" "An everyday favorite for whatever you're brewing." 3200
+    product "Curve Lounge Chair" "Home" "chair" "The most comfortable corner of your living room." 34900
+    product "Greenhouse Plant" "Home" "plant" "A little life for your desk or windowsill." 2800
+}

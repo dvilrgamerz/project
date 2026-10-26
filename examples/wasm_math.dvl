@@ -1,0 +1,5 @@
+# Experimental DVILR WebAssembly numeric subset.
+let base = 12
+var multiplier = 7
+multiplier = multiplier * 3
+say base + multiplier
