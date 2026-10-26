@@ -1,5 +1,18 @@
 # DVILR Native Compiler — V0.6 to V1.0 Implementation Tracker
 
+## October 26, 2026 — Local native compiler progress (source package separate from this repo)
+
+**A downloadable V0.6+ foundations preview has been created and tested locally. Its compiler source/binary are packaged separately; this GitHub repository still contains the storefront/WebAssembly demo, not the updated native compiler.**
+
+- V0.6 foundations: basic global `struct` / `record` with i64 fields, integer `enum`, relative `import "name.dvl"` with cycle/path checks, `assert`, plus earlier checked global i64 arrays, `len`, and static text.
+- V0.8 foundations: Windows-only `http_get("https://...", "local.file")` via URLMON, as a download-to-file *prototype*; Wasm numeric subset now has booleans, `if/else` and `while`. A generated Wasm loop was actually run and returned 55.
+- V0.9 foundations: CPU-only native integer `sum(array)` and `dot(a,b)`. No floating tensor engine, GPU, autograd or full graphics engine.
+- V1.0: introduced a fail-closed Stage 0→1→2→3 check, but the full DVILR-written compiler and self-hosting proof remain **missing**.
+
+Verification: 121 passing Go tests, `go vet` passed, Windows x64 cross-build passed, and generated Wasm executed in Node. **Windows native execution has NOT been verified.** Major version completion statuses remain `false`.
+
+
+
 **This is a roadmap, not a claim of complete implementation.** The `project` repository contains a storefront/WebAssembly demo and does not currently carry the complete native compiler sources.
 
 ## V0.6 — Core language
