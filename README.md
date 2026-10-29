@@ -20,3 +20,7 @@ The unified goal for the standalone DVILR compiler and native SDKs is documented
 ## DVILR V1.0 next upgrades
 
 Additional V1.0 acceptance requirements for the developer toolchain (CLI, package manager, LSP/debugger, safety, distribution and proof-driven showcase apps) are in [DVILR V1.0 Next Upgrades](DVILR_V1_NEXT_UPGRADES.md). These are **planned**, not implemented.
+
+## DVILR Standalone v0.6.5 developer-tooling preview
+
+The experimental compiler gained `dvl new ProjectName` and `dvl tokens --json file.dvl`, with Go unit/race tests and a Windows x64 cross-build. The new [compiler source migration folder](compiler/README.md) holds the tool implementation and its tests. **The full compiler source is still distributed in the V0.6.5 ZIP from the ChatGPT conversation, and is not yet checked into this GitHub repository.** This is not self-hosted and is not a DVILR V1.0 release.
