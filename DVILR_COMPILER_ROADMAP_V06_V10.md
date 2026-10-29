@@ -1,5 +1,14 @@
 # DVILR Native Compiler — V0.6 to V1.0 Implementation Tracker
 
+## October 29, 2026 — Native V0.6.4 checked vector insertion/removal
+
+- Local source ZIP includes native compiler support for `insert(vector,index,value)` and `remove_at(vector,index)` on bounded global i64 vectors (maximum 1024 elements). Both reject invalid unsigned indices and full-capacity insertions with runtime exit code 8. Removal shifts left and clears the former final slot.
+- Added Go compiler tests for valid/invalid forms, deterministic PE output, and machine-code safety checks, plus a **proposed, unexecuted** Windows CI test of expected program output and invalid-index exit codes.
+- Verified locally: `go test ./...`, `go test -race ./...`, `go vet ./...`, cross-built Windows x64 compiler, generated Windows sample PE binaries; generated minimal WASI program executed in Node and returned 45.
+- **Not verified:** running compiled sample programs on Windows. **Not complete:** general memory safety/type system, production networking/WASI, native GPU/hardware graphics, and any DVILR-written compiler Stage 1→2→3 self-hosting proof.
+- The new compiler source and executable are packaged separately in `DVILR-Standalone-v0.6.4-Checked-Vectors-Preview.zip`, **not merged into this demo GitHub repo**.
+
+
 ## October 29, 2026 — Native V0.6.3 safety and collections preview
 
 The source/binary are provided in a downloadable ZIP in the associated ChatGPT conversation; **this GitHub repository still does not contain the standalone compiler implementation.**
