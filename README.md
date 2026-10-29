@@ -16,3 +16,7 @@ The DVILR V0.5 production compiler is still authored in Go; compiler self-hostin
 ## DVILR V1.0 unified release goal
 
 The unified goal for the standalone DVILR compiler and native SDKs is documented in [DVILR V1.0 Unified Release Goal](DVILR_V1_UNIFIED_RELEASE_GOAL.md). This is a **development specification**, not a completed compiler release. The standalone compiler source is currently distributed separately from this storefront demo repository.
+
+## DVILR V1.0 next upgrades
+
+Additional V1.0 acceptance requirements for the developer toolchain (CLI, package manager, LSP/debugger, safety, distribution and proof-driven showcase apps) are in [DVILR V1.0 Next Upgrades](DVILR_V1_NEXT_UPGRADES.md). These are **planned**, not implemented.
