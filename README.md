@@ -32,3 +32,7 @@ See [DVILR Windows Installer v0.6.6](DVILR_WINDOWS_INSTALLER_V066.md) for setup 
 ## DVILR v1.1 Developer Preview (October 29, 2026)
 
 See [DVILR v1.1 Developer Preview release notes](DVILR_V11_DEVELOPER_PREVIEW.md) for the REPL, formatter, doctor, starter manifest and VS Code highlighting package, verification checks and artifact SHA-256 values. This is an **experimental Windows installer build**, not a completed V1.0 core/AI/GPU/self-hosting release. The complete compiler source and executable are provided as ChatGPT conversation artifacts, not GitHub-hosted downloads.
+
+## DVILR v1.1 unified release requirements
+
+All previously proposed V0.6 core language, V0.8 web/systems, V0.9 AI/GPU/game and V1.0 self-hosting features are now included in the **final v1.1 release goal**. See [DVILR v1.1 Unified Release Requirements](DVILR_V11_UNIFIED_RELEASE_REQUIREMENTS.md). They are **not all implemented**. A new local preview includes `dvl test [path]`, optional Windows `--run` and UTF-8 input validation. The complete updated source is available in a separate downloadable ZIP, not fully committed into this repository.
