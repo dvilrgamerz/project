@@ -36,3 +36,5 @@ See [DVILR v1.1 Developer Preview release notes](DVILR_V11_DEVELOPER_PREVIEW.md)
 ## DVILR v1.1 unified release requirements
 
 All previously proposed V0.6 core language, V0.8 web/systems, V0.9 AI/GPU/game and V1.0 self-hosting features are now included in the **final v1.1 release goal**. See [DVILR v1.1 Unified Release Requirements](DVILR_V11_UNIFIED_RELEASE_REQUIREMENTS.md). They are **not all implemented**. A new local preview includes `dvl test [path]`, optional Windows `--run` and UTF-8 input validation. The complete updated source is available in a separate downloadable ZIP, not fully committed into this repository.
+
+The latest [v1.1 implementation checkpoint](DVILR_V11_IMPLEMENTATION_CHECKPOINT.md) records the tested `dvl test` command, UTF-8 validation, Windows cross-build, checksums, and unfinished release gates.
