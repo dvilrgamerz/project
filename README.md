@@ -24,3 +24,7 @@ Additional V1.0 acceptance requirements for the developer toolchain (CLI, packag
 ## DVILR Standalone v0.6.5 developer-tooling preview
 
 The experimental compiler gained `dvl new ProjectName` and `dvl tokens --json file.dvl`, with Go unit/race tests and a Windows x64 cross-build. The new [compiler source migration folder](compiler/README.md) holds the tool implementation and its tests. **The full compiler source is still distributed in the V0.6.5 ZIP from the ChatGPT conversation, and is not yet checked into this GitHub repository.** This is not self-hosted and is not a DVILR V1.0 release.
+
+## Windows one-click installer (v0.6.6 preview)
+
+See [DVILR Windows Installer v0.6.6](DVILR_WINDOWS_INSTALLER_V066.md) for setup instructions, SHA-256 verification and test status. The unsigned Windows setup executable and full compiler source ZIP were supplied as separate ChatGPT download artifacts and **are not currently hosted in this GitHub repository**. The compiler is still Go-bootstrapped and V1.0 is unfinished.
