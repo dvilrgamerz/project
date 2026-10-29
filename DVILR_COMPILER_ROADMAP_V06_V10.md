@@ -93,3 +93,10 @@ Freeze Go-built Stage 0; implement lexer/parser/typechecker/IR/backend/PE writer
 A local Windows x64 compiler preview has been built and tested on Linux (Go test suite and native PE generation). New language subset: `array a=[1,2,3]`, `a[i]`, `a[i]=n`, `len(a)`, `text s="hello"`, `say s`. The executable is a Windows PE, but executing it under Windows has not been tested in the current environment.
 
 **Integration requirement:** import the complete updated compiler source into a dedicated DVILR language repository, add Windows CI and runtime tests, then tackle the remaining items incrementally. Do not mark V0.6/V0.8/V0.9/V1.0 complete until their exit criteria are met.
+
+## October 29, 2026 — DVILR Standalone v0.6.5 developer-tooling checkpoint
+
+- Implemented and locally tested `dvl new <ProjectName>` (starter projects, no overwrite), `dvl tokens <file> [--json]` (line/column lexer output), and fail-fast non-Windows `run` behavior.
+- Verified: `go test ./...`, `go test -race ./...`, `go vet ./...`, Windows x64 compiler cross-build, starter compile, and numeric WebAssembly/WASI execution under Node.js (result 45).
+- GitHub [compiler migration folder](compiler/README.md) now includes `src/tooling.go` and `src/tooling_test.go` but **not the complete buildable compiler**; full source/binary are in the separately downloadable v0.6.5 ZIP. GitHub Windows native runtime CI has not been run.
+- V0.6, V0.8, V0.9 and self-hosted V1.0 all remain incomplete. No Stage 1→2→3 proof or GPU hardware tests exist.
