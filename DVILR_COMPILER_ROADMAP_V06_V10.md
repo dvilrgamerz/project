@@ -1,5 +1,15 @@
 # DVILR Native Compiler — V0.6 to V1.0 Implementation Tracker
 
+## October 29, 2026 — V0.6.4 collections compiler preview
+
+A separate downloadable ZIP (not committed into this repository) contains the updated compiler source, Windows cross-built compiler, tests, and Windows CI workflow.
+
+- **Native backend changes:** `fill(array_or_vector, i64)` and `reverse(array_or_vector)`; only the current logical length of bounded vectors is accessed, and empty/single-element reversals are guarded.
+- **Locally verified:** Go unit tests, race tests, vet, Windows x64 compiler cross-build, generated PE inspection, Node-executed numeric Wasm and WASI checks (45).
+- **Not verified:** execution of generated Windows programs and GPU hardware.
+- **Still incomplete:** Full V0.6 core (general memory-managed collections and complete type system); V0.8 general networking/async/WASI; V0.9 native GPU/graphics; V1.0 self-hosting Stage 1→2→3. A Go-authored native compiler does not prove self-hosting.
+
+
 ## October 29, 2026 — Native V0.6.4 checked vector insertion/removal
 
 - Local source ZIP includes native compiler support for `insert(vector,index,value)` and `remove_at(vector,index)` on bounded global i64 vectors (maximum 1024 elements). Both reject invalid unsigned indices and full-capacity insertions with runtime exit code 8. Removal shifts left and clears the former final slot.
