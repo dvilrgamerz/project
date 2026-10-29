@@ -1,5 +1,7 @@
 # DVILR V1.0 — Unified Release Goal
 
+**Developer experience & release acceptance expansion:** [DVILR V1.0 Next Upgrades](DVILR_V1_NEXT_UPGRADES.md) (planned; not yet implemented).
+
 **Status: IN DEVELOPMENT — NOT RELEASED.**
 **Baseline reviewed:** DVILR Standalone v0.6.4 Preview (Go-bootstrapped Windows x64 compiler). Existing repository contains a storefront/Wasm demo and a progress tracker, **not the current standalone compiler source**.
 
