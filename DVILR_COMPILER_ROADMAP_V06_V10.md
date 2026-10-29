@@ -1,5 +1,18 @@
 # DVILR Native Compiler — V0.6 to V1.0 Implementation Tracker
 
+## October 29, 2026 — Native V0.6.3 safety and collections preview
+
+The source/binary are provided in a downloadable ZIP in the associated ChatGPT conversation; **this GitHub repository still does not contain the standalone compiler implementation.**
+
+- Added native `resize(v,n)` for bounded i64 vectors; 0–1024 elements, zero-initialized expansion; invalid sizes exit status 8.
+- Added `clear_vector(v)` (distinct from console `clear`); vectors refilled after clear are zero-initialized.
+- Added signed division/modulo overflow protection for MinInt64 / -1 and division by zero; failure exit status 7.
+- Added positive/negative tests and x64 opcode checks plus a proposed Windows CI runtime workflow.
+- Locally verified: `go test ./...`, `go test -race ./...`, `go vet ./...`, Windows x64 compiler cross-build and PE generation; numeric WASI preview1 module ran in Node and returned 45.
+- **Not verified:** running generated Windows programs under Windows or GitHub Windows CI.
+- **Full V0.6, V0.8, V0.9, V1.0 remain INCOMPLETE.** Complete type/memory system, native network/async APIs, GPU/hardware graphics, and the DVILR-written compiler Stage 1→2→3 proof remain unimplemented.
+
+
 ## October 26, 2026 — Verified V0.6.2 local preview (source ZIP, not merged into this GitHub repo)
 
 - The standalone Windows x64 Go-bootstrapped compiler now generates native `sum(array_or_vector)` and `dot(a,b)` loops for **i64** arrays and bounded vectors, reading values and lengths at runtime.
