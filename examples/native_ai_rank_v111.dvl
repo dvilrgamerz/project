@@ -1,0 +1,12 @@
+# DVILR v1.1.1 native integer score ranking
+# This example requires the separately downloadable v1.1.1 compiler.
+vector scores = [-10, 11, 19, 19, 7]
+say "Predicted class index:"
+say argmax(scores)
+say "Highest score:"
+say max_value(scores)
+say "Lowest score:"
+say min_value(scores)
+assert argmax(scores) == 2
+assert max_value(scores) == 19
+assert min_value(scores) == -10
