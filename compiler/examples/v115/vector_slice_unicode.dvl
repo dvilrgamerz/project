@@ -1,0 +1,18 @@
+# Native bounds-checked i64 slice and Unicode variable name.
+vector source = [10,20,30,40]
+vector target = [90,80,70,60]
+slice_vector(target,source,1,2)
+assert len(target) == 2
+assert target[0] == 20
+assert target[1] == 30
+source[1] = 999
+assert target[0] == 20
+var café:i64 = sum(target)
+assert café == 50
+slice_vector(source,source,1,3)
+assert len(source) == 3
+assert source[0] == 999
+assert source[1] == 30
+assert source[2] == 40
+say "SLICE OK"
+say café
