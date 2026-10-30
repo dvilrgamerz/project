@@ -50,3 +50,7 @@ A separate full-source ZIP and unsigned Windows installer now include `checked_a
 ## DVILR v1.1.3 typed scalars and memory reference preview
 
 The [v1.1.3 verification checkpoint](DVILR_V113_TYPE_MEMORY_CHECKPOINT.md) documents native `bool` / `i64` annotation checking, a Go-hosted generational-handle and owned-byte reference memory runtime, Windows cross-builds, test evidence and still-missing native runtime verification. See the [typed scalar example](examples/v113/typed_scalar_success.dvl) and [Windows test script](compiler/tests/verify-v113-windows.ps1). **The full updated compiler source is in the separate downloadable ZIP, not completely merged into GitHub; the full native type/memory system, GPU execution and self-hosting remain unfinished.**
+
+## DVILR v1.1.4 — typed functions and P0–P6 tracker
+
+Review the [verified progress tracker](DVILR_V114_P0_P6_TRACKER.md), [Windows native CI](.github/workflows/dvilr-native-windows-v114.yml), and [test script](compiler/tools/verify-v114-windows.ps1). Windows test execution remains **unverified** because the full compiler source has not been imported into this repository. The v1.1.4 full-source ZIP and unsigned Setup `.exe` are available separately from the ChatGPT conversation. GPU, full memory safety, and compiler self-hosting remain unfinished.
