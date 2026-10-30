@@ -1,0 +1,10 @@
+# DVILR v1.1.3 — explicit bool/i64 annotations
+let score: i64 = 40 + 2
+var passed: bool = score > 40
+assert passed
+say passed
+passed = false
+say passed
+var finished: bool = (3 > 1) && !false
+say finished
+assert score == 42
