@@ -1,0 +1,65 @@
+name: DVILR Native Windows v1.1.4 — manual P0 verification
+
+# Fail closed; only trigger after importing the full source tree into compiler/.
+# Do NOT call cross-compilation a passing native Windows execution result.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-windows:
+    runs-on: windows-2022
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Verify compiler source is present
+        shell: pwsh
+        run: |
+          if (!(Test-Path 'compiler/go.mod') -or !(Test-Path 'compiler/src/main.go')) {
+            throw 'Missing full standalone source tree: import V1.1.4 ZIP into compiler/ before this job can run.'
+          }
+      - uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
+        with:
+          go-version-file: compiler/go.mod
+      - name: Run unit tests and Go vet
+        shell: pwsh
+        working-directory: compiler
+        run: |
+          go test ./... -count=1
+          if ($LASTEXITCODE -ne 0) { throw 'Go tests failed' }
+          go vet ./...
+          if ($LASTEXITCODE -ne 0) { throw 'Go vet failed' }
+      - name: Build compiler and test generated Windows PE
+        shell: pwsh
+        working-directory: compiler
+        run: |
+          New-Item -ItemType Directory -Path installer/payload -Force | Out-Null
+          go build -trimpath -o installer/payload/dvl.exe ./src
+          if ($LASTEXITCODE -ne 0) { throw 'Compiler build failed' }
+          ./tools/verify-v114-windows.ps1 -Compiler ./installer/payload/dvl.exe
+      - name: Build, install, verify and uninstall GUI installer
+        shell: pwsh
+        working-directory: compiler
+        run: |
+          go build -trimpath -ldflags '-s -w -H=windowsgui' -o ./DVILR-Setup-v1.1.4.exe ./installer
+          if ($LASTEXITCODE -ne 0) { throw 'Setup build failed' }
+          $destination = Join-Path $env:LOCALAPPDATA 'Programs\DVILR'
+          try {
+            & ./DVILR-Setup-v1.1.4.exe -silent
+            if ($LASTEXITCODE -ne 0 -or !(Test-Path (Join-Path $destination 'dvl.exe'))) { throw 'Install failed' }
+            & (Join-Path $destination 'dvl.exe') version
+            if ($LASTEXITCODE -ne 0) { throw 'Installed compiler failed' }
+          } finally {
+            & ./DVILR-Setup-v1.1.4.exe -uninstall -silent
+            if ($LASTEXITCODE -ne 0) { throw 'Uninstall failed' }
+          }
+          if (Test-Path (Join-Path $destination 'dvl.exe')) { throw 'Compiler remains after uninstall' }
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: DVILR-v1.1.4-Windows-installer-UNSIGNED
+          path: compiler/DVILR-Setup-v1.1.4.exe
+          if-no-files-found: error
