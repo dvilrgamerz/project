@@ -1,0 +1,52 @@
+name: DVILR v1.1.5 P0 Native Windows Verification
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-windows:
+    runs-on: windows-2022
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Require complete compiler source
+        shell: pwsh
+        run: |
+          if (!(Test-Path compiler/go.mod) -or !(Test-Path compiler/src/main.go)) {
+            throw 'Missing complete source: first import DVILR v1.1.5 ZIP under compiler/. This workflow cannot certify Windows execution yet.'
+          }
+      - uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
+        with:
+          go-version-file: compiler/go.mod
+      - name: Build and verify native compiler
+        shell: pwsh
+        working-directory: compiler
+        run: |
+          go test ./... -count=1
+          if ($LASTEXITCODE -ne 0) { throw 'Unit test failure' }
+          go vet ./...
+          if ($LASTEXITCODE -ne 0) { throw 'Vet failure' }
+          New-Item -ItemType Directory -Path installer/payload -Force | Out-Null
+          go build -trimpath -o installer/payload/dvl.exe ./src
+          if ($LASTEXITCODE -ne 0) { throw 'Compiler build failed' }
+          ./tools/verify-v114-windows.ps1 -Compiler ./installer/payload/dvl.exe
+          ./tools/verify-v115-windows.ps1 -Compiler ./installer/payload/dvl.exe
+      - name: Verify unsigned installer installation and removal
+        shell: pwsh
+        working-directory: compiler
+        run: |
+          go build -trimpath -ldflags '-s -w -H=windowsgui' -o DVILR-Setup-v1.1.5.exe ./installer
+          if ($LASTEXITCODE -ne 0) { throw 'Installer build failed' }
+          $target = Join-Path $env:LOCALAPPDATA 'Programs\DVILR'
+          try {
+            & ./DVILR-Setup-v1.1.5.exe -silent
+            if ($LASTEXITCODE -ne 0 -or !(Test-Path (Join-Path $target 'dvl.exe'))) { throw 'Install failed' }
+            $version = & (Join-Path $target 'dvl.exe') version
+            if ($LASTEXITCODE -ne 0 -or $version -notmatch '1\.1\.5') { throw "Incorrect installed compiler version $version" }
+          } finally {
+            & ./DVILR-Setup-v1.1.5.exe -uninstall -silent
+            if ($LASTEXITCODE -ne 0) { throw 'Uninstall failed' }
+          }
+          if (Test-Path (Join-Path $target 'dvl.exe')) { throw 'Uninstall left the compiler behind' }
