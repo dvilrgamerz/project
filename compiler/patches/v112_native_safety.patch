@@ -1,0 +1,138 @@
+--- a/src/main.go
++++ b/src/main.go
+@@ -284,7 +284,7 @@
+ 		"and", "or", "not", "i64", "string", "array", "vector",
+ 		"struct", "record", "enum", "import", "assert", "say", "print",
+ 		"push", "pop", "resize", "clear_vector", "insert", "remove_at", "fill", "reverse", "append", "set_text", "len", "dot", "relu",
+-		"abs", "min", "max", "max_value", "min_value", "argmax", "load", "save", "file_size", "byte_at",
++		"abs", "min", "max", "checked_add", "checked_sub", "checked_mul", "max_value", "min_value", "argmax", "copy_vector", "load", "save", "file_size", "byte_at",
+ 		"sleep", "clear", "draw", "key", "emit_byte", "website", "http_get",
+ 		"spawn", "join":
+ 		return true
+@@ -566,6 +566,40 @@
+ 		}
+ 		p.needs["GetAsyncKeyState"] = true
+ 		p.g.call("key_state")
++	case (t.text == "checked_add" || t.text == "checked_sub" || t.text == "checked_mul") && p.is("("):
++		// Arithmetic with deterministic signed-overflow handling. Unlike the
++		// existing wrapping i64 operators, these exit with status 10 when OF=1.
++		// Explicit args must each be a valid numeric expression; a string or
++		// sequence cannot be silently interpreted as a scalar.
++		p.next()
++		if e := p.expr(1); e != nil {
++			return e
++		}
++		p.g.emit(0x50) // push first argument
++		if e := p.expect(","); e != nil {
++			return e
++		}
++		if e := p.expr(1); e != nil {
++			return e
++		}
++		if e := p.expect(")"); e != nil {
++			return e
++		}
++		p.g.emit(0x49, 0x89, 0xc2, 0x58) // mov r10,rax; pop rax
++		switch t.text {
++		case "checked_add":
++			p.g.emit(0x4c, 0x01, 0xd0) // add rax,r10
++		case "checked_sub":
++			p.g.emit(0x4c, 0x29, 0xd0) // sub rax,r10
++		case "checked_mul":
++			p.g.emit(0x49, 0x0f, 0xaf, 0xc2) // imul rax,r10
++		}
++		safe := p.g.fresh()
++		p.g.emit(0x0f, 0x81) // JNO: overflow clear
++		p.g.rel(safe)
++		p.g.emit(0xb9, 0x0a, 0, 0, 0) // Windows exit status 10
++		p.g.callIAT("ExitProcess")
++		p.g.label(safe)
+ 	case (t.text == "max_value" || t.text == "min_value" || t.text == "argmax") && p.is("("):
+@@ -1174,6 +1208,55 @@
+ 		p.needs["WaitForSingleObject"] = true
+ 		p.needs["CloseHandle"] = true
+ 		p.g.call("native_thread_join")
++	case "copy_vector":
++		// Deep-copy i64 values between bounded vectors. No reference or alias
++		// is created. Both source and destination have fixed 1024-element
++		// allocations, so the runtime copy cannot exceed capacity.
++		if e := p.expect("("); e != nil {
++			return e
++		}
++		dst := p.next()
++		if dst.kind != "ident" || !p.hasVector(dst.text) {
++			return p.failf("copy_vector destination must be a vector")
++		}
++		if e := p.expect(","); e != nil {
++			return e
++		}
++		src := p.next()
++		if src.kind != "ident" || !p.hasVector(src.text) {
++			return p.failf("copy_vector source must be a vector")
++		}
++		if e := p.expect(")"); e != nil {
++			return e
++		}
++		p.g.movR11Ptr("data:veclen:" + src.text)
++		p.g.leaR8("data:vec:" + src.text)
++		p.g.leaRDX("data:vec:" + dst.text)
++		p.g.emit(0x31, 0xc9) // xor ecx,ecx
++		loop, done := p.g.fresh(), p.g.fresh()
++		p.g.label(loop)
++		p.g.emit(0x4c, 0x39, 0xd9) // cmp rcx,r11
++		p.g.emit(0x0f, 0x83)       // jae
++		p.g.rel(done)
++		p.g.emit(0x4d, 0x8b, 0x14, 0xc8) // mov r10,[r8+rcx*8]
++		p.g.emit(0x4c, 0x89, 0x14, 0xca) // mov [rdx+rcx*8],r10
++		p.g.emit(0x48, 0xff, 0xc1)       // inc rcx
++		p.g.jmp(loop)
++		p.g.label(done)
++		// Zero any now-inaccessible old destination elements. This ensures
++		// that later resizes cannot accidentally expose stale values.
++		p.g.movR11Ptr("data:veclen:" + dst.text)
++		zeroLoop, zeroDone := p.g.fresh(), p.g.fresh()
++		p.g.label(zeroLoop)
++		p.g.emit(0x4c, 0x39, 0xd9) // cmp rcx,r11
++		p.g.emit(0x0f, 0x83)       // jae
++		p.g.rel(zeroDone)
++		p.g.emit(0x48, 0xc7, 0x04, 0xca, 0, 0, 0, 0) // qword[rdx+rcx*8]=0
++		p.g.emit(0x48, 0xff, 0xc1)                   // inc rcx
++		p.g.jmp(zeroLoop)
++		p.g.label(zeroDone)
++		p.g.movRAXPtr("data:veclen:" + src.text)
++		p.g.movRAXStore("data:veclen:" + dst.text)
+ 	case "clear_vector":
+@@ -1185,8 +1268,21 @@
+ 		if e := p.expect(")"); e != nil {
+ 			return e
+ 		}
+-		// Length zero makes the old contents inaccessible; resize always
+-		// zeroes newly exposed elements before updating the vector length.
++		// Zero every live element before setting the logical length to zero.
++		// This removes stale values from the backing storage, not just the
++		// length metadata. The loop is bounded by the checked vector capacity.
++		p.g.movR11Ptr("data:veclen:" + name.text)
++		p.g.leaRDX("data:vec:" + name.text)
++		p.g.emit(0x31, 0xc9) // xor ecx,ecx
++		loop, done := p.g.fresh(), p.g.fresh()
++		p.g.label(loop)
++		p.g.emit(0x4c, 0x39, 0xd9) // cmp rcx,r11
++		p.g.emit(0x0f, 0x83)       // jae done
++		p.g.rel(done)
++		p.g.emit(0x48, 0xc7, 0x04, 0xca, 0, 0, 0, 0, 0) // qword[rdx+rcx*8] = 0
++		p.g.emit(0x48, 0xff, 0xc1) // inc rcx
++		p.g.jmp(loop)
++		p.g.label(done)
+ 		p.g.putNum(0)
+ 		p.g.movRAXStore("data:veclen:" + name.text)
+@@ -1447,7 +1543,11 @@
+ 		p.g.emit(0xb9, 0x08, 0, 0, 0)
+ 		p.g.callIAT("ExitProcess")
+ 		p.g.label(valid)
+-		p.g.decPtr("data:veclen:" + name)
++		// Remove and zero the final live element before shortening the vector.
++		p.g.emit(0x48, 0xff, 0xc8) // dec rax => removed index
++		p.g.leaRDX("data:vec:" + name)
++		p.g.emit(0x48, 0xc7, 0x04, 0xc2, 0, 0, 0, 0) // qword[rdx+rax*8] = 0
++		p.g.movRAXStore("data:veclen:" + name)
+ 	case "append", "set_text":
