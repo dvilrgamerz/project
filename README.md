@@ -54,3 +54,7 @@ The [v1.1.3 verification checkpoint](DVILR_V113_TYPE_MEMORY_CHECKPOINT.md) docum
 ## DVILR v1.1.4 — typed functions and P0–P6 tracker
 
 Review the [verified progress tracker](DVILR_V114_P0_P6_TRACKER.md), [Windows native CI](.github/workflows/dvilr-native-windows-v114.yml), and [test script](compiler/tools/verify-v114-windows.ps1). Windows test execution remains **unverified** because the full compiler source has not been imported into this repository. The v1.1.4 full-source ZIP and unsigned Setup `.exe` are available separately from the ChatGPT conversation. GPU, full memory safety, and compiler self-hosting remain unfinished.
+
+## DVILR v1.1.5 native compiler checkpoint
+
+The standalone compiler now has Unicode-aware lexical positions and a bounds-checked `slice_vector(destination, source, start, count)` primitive over **fixed-capacity i64 vectors**. The full buildable source and unsigned Windows installer are in the separate downloadable ChatGPT archive, not yet imported into this GitHub demo repository. See [v1.1.5 verification notes](DVILR_V115_UNICODE_NATIVE_SLICE_CHECKPOINT.md), [the Windows fixture](compiler/examples/v115/vector_slice_unicode.dvl), and [manual Windows test workflow](.github/workflows/dvilr-native-windows-v115.yml). **No actual Windows execution has been verified.** P0–P6 remain open; native heap safety, networking/Wasm completion, GPU/game support and self-hosting are not complete.
