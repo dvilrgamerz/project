@@ -1,0 +1,65 @@
+--- a/src/main.go
++++ b/src/main.go
+@@ -284,7 +284,7 @@
+ 		"and", "or", "not", "i64", "string", "array", "vector",
+ 		"struct", "record", "enum", "import", "assert", "say", "print",
+ 		"push", "pop", "resize", "clear_vector", "insert", "remove_at", "fill", "reverse", "append", "set_text", "len", "dot", "relu",
+-		"abs", "min", "max", "load", "save", "file_size", "byte_at",
++		"abs", "min", "max", "max_value", "min_value", "argmax", "load", "save", "file_size", "byte_at",
+ 		"sleep", "clear", "draw", "key", "emit_byte", "website", "http_get",
+ 		"spawn", "join":
+ 		return true
+@@ -566,6 +566,53 @@
+ 		}
+ 		p.needs["GetAsyncKeyState"] = true
+ 		p.g.call("key_state")
++	case (t.text == "max_value" || t.text == "min_value" || t.text == "argmax") && p.is("("):
++		// Deterministic signed i64 reductions over native fixed arrays and bounded
++		// vectors. First occurrence wins ties in argmax. Empty collections fail
++		// at compile time if their length is static, otherwise with exit code 8.
++		p.next()
++		id := p.next()
++		if id.kind != "ident" || !p.hasI64Sequence(id.text) {
++			return p.failf("%s requires an i64 array or vector identifier", t.text)
++		}
++		if _, isVector := p.vectors[id.text]; !isVector && len(p.arrays[id.text]) == 0 {
++			return p.failf("%s requires a nonempty array", t.text)
++		}
++		if e := p.expect(")"); e != nil {
++			return e
++		}
++		p.emitSeqLenR11(id.text) // r11 = dynamic or static length
++		p.emitSeqBaseR8(id.text) // r8 = address of first element
++		nonempty := p.g.fresh()
++		p.g.emit(0x4d, 0x85, 0xdb) // test r11,r11
++		p.g.jne(nonempty)
++		p.g.emit(0xb9, 0x08, 0, 0, 0) // exit status 8 for empty vector
++		p.g.callIAT("ExitProcess")
++		p.g.label(nonempty)
++		p.g.emit(0x49, 0x8b, 0x00) // mov rax,[r8]; first score
++		p.g.emit(0x48, 0x31, 0xc9) // xor rcx,rcx; index
++		p.g.emit(0x4d, 0x31, 0xc9) // xor r9,r9; winning index
++		loop, end, skip := p.g.fresh(), p.g.fresh(), p.g.fresh()
++		p.g.label(loop)
++		p.g.emit(0x48, 0xff, 0xc1) // inc rcx
++		p.g.emit(0x4c, 0x39, 0xd9) // cmp rcx,r11
++		p.g.jrge(end)
++		p.g.emit(0x4d, 0x8b, 0x14, 0xc8) // mov r10,[r8+rcx*8]
++		p.g.emit(0x49, 0x39, 0xc2)       // cmp r10,rax; signed
++		if t.text == "min_value" {
++			p.g.emit(0x0f, 0x8d) // jge skip for minima, including ties
++		} else {
++			p.g.emit(0x0f, 0x8e) // jle skip for maxima, including ties
++		}
++		p.g.rel(skip)
++		p.g.emit(0x4c, 0x89, 0xd0) // mov rax,r10; winner value
++		p.g.emit(0x49, 0x89, 0xc9) // mov r9,rcx; winner index
++		p.g.label(skip)
++		p.g.jmp(loop)
++		p.g.label(end)
++		if t.text == "argmax" {
++			p.g.emit(0x4c, 0x89, 0xc8) // mov rax,r9
++		}
+ 	case (t.text == "sum" || t.text == "dot") && p.is("("):
+ 		// Native i64 array/vector reduction. Runtime reads preserve mutations and
+ 		// use each vector's current length; no fixed-size snapshots or Go SDK.
