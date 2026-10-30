@@ -1,0 +1,2 @@
+fn required(x:i64)->bool { return x > 0 }
+say required(false)
