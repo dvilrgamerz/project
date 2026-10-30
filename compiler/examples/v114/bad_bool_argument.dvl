@@ -1,0 +1,2 @@
+fn required(flag:bool)->bool { return flag }
+say required(42)
