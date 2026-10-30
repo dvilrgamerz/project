@@ -38,3 +38,7 @@ See [DVILR v1.1 Developer Preview release notes](DVILR_V11_DEVELOPER_PREVIEW.md)
 All previously proposed V0.6 core language, V0.8 web/systems, V0.9 AI/GPU/game and V1.0 self-hosting features are now included in the **final v1.1 release goal**. See [DVILR v1.1 Unified Release Requirements](DVILR_V11_UNIFIED_RELEASE_REQUIREMENTS.md). They are **not all implemented**. A new local preview includes `dvl test [path]`, optional Windows `--run` and UTF-8 input validation. The complete updated source is available in a separate downloadable ZIP, not fully committed into this repository.
 
 The latest [v1.1 implementation checkpoint](DVILR_V11_IMPLEMENTATION_CHECKPOINT.md) records the tested `dvl test` command, UTF-8 validation, Windows cross-build, checksums, and unfinished release gates.
+
+## DVILR v1.1.1 native AI score ranking (preview)
+
+New native `max_value`, `min_value`, and `argmax` over signed i64 arrays/vectors are available in the separate v1.1.1 compiler source ZIP. See [implementation checkpoint](DVILR_V111_NATIVE_AI_CHECKPOINT.md), [compiler patch](compiler/patches/v111_native_ai_ranking.diff), and [source example](examples/native_ai_rank_v111.dvl). Go tests, native PE generation and x64 disassembly checks passed; **actual Windows runtime execution and full V1.1 completion are not verified**. The full compiler remains in the downloadable ZIP, not merged into this repository.
