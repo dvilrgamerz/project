@@ -1,0 +1,26 @@
+# DVILR v1.1.2 safe vector copy and checked arithmetic demo
+# Compile with the v1.1.2 standalone compiler, not the browser teaching subset.
+vector source = [2, 4, 6]
+vector dest = [100, 200, 300, 400]
+copy_vector(dest, source)
+assert len(dest) == 3
+assert dest[0] == 2
+assert dest[2] == 6
+source[0] = 99
+assert dest[0] == 2
+resize(dest, 4)
+assert dest[3] == 0
+assert checked_add(dest[0], dest[1]) == 6
+assert checked_sub(dest[2], dest[0]) == 4
+assert checked_mul(dest[1], dest[2]) == 24
+vector abandoned = [500, 600, 700]
+pop(abandoned)
+resize(abandoned, 3)
+assert abandoned[2] == 0
+clear_vector(abandoned)
+resize(abandoned, 3)
+assert abandoned[0] == 0
+assert abandoned[1] == 0
+say "COPY AND ARITHMETIC OK"
+say len(dest)
+say sum(dest)
