@@ -9,7 +9,7 @@
  		"sleep", "clear", "draw", "key", "emit_byte", "website", "http_get",
  		"spawn", "join":
  		return true
-@@ -566,6 +566,40 @@
+@@ -566,4 +566,38 @@
  		}
  		p.needs["GetAsyncKeyState"] = true
  		p.g.call("key_state")
@@ -48,7 +48,7 @@
 +		p.g.callIAT("ExitProcess")
 +		p.g.label(safe)
  	case (t.text == "max_value" || t.text == "min_value" || t.text == "argmax") && p.is("("):
-@@ -1174,6 +1208,55 @@
+@@ -1174,4 +1208,53 @@
  		p.needs["WaitForSingleObject"] = true
  		p.needs["CloseHandle"] = true
  		p.g.call("native_thread_join")
@@ -102,7 +102,7 @@
 +		p.g.movRAXPtr("data:veclen:" + src.text)
 +		p.g.movRAXStore("data:veclen:" + dst.text)
  	case "clear_vector":
-@@ -1185,8 +1268,21 @@
+@@ -1185,7 +1268,20 @@
  		if e := p.expect(")"); e != nil {
  			return e
  		}
@@ -125,7 +125,7 @@
 +		p.g.label(done)
  		p.g.putNum(0)
  		p.g.movRAXStore("data:veclen:" + name.text)
-@@ -1447,7 +1543,11 @@
+@@ -1447,5 +1543,9 @@
  		p.g.emit(0xb9, 0x08, 0, 0, 0)
  		p.g.callIAT("ExitProcess")
  		p.g.label(valid)
