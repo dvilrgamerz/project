@@ -1,0 +1,11 @@
+# DVILR v1.1.4 - typed bool functions; compile with the full native compiler
+fn is_adult(age:i64)->bool { return age >= 18 }
+fn either(a:bool,b:bool)->bool { return a || b }
+fn score(passed:bool)->i64 { if passed {return 42} return 0 }
+let yes:bool = is_adult(21)
+let no:bool = is_adult(12)
+assert yes
+assert !no
+say yes
+say no
+say score(either(yes,no))
