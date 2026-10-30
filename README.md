@@ -46,3 +46,7 @@ New native `max_value`, `min_value`, and `argmax` over signed i64 arrays/vectors
 ## DVILR v1.1.2 — Native memory and type-safety preview
 
 A separate full-source ZIP and unsigned Windows installer now include `checked_add`, `checked_sub`, `checked_mul` (native overflow exit 10), `copy_vector` (bounded deep copy with static vector-type checks), and zeroization for `pop`/`clear_vector`. Read the [v1.1.2 implementation checkpoint](DVILR_V112_TYPE_MEMORY_CHECKPOINT.md), [compiler source patch](compiler/patches/v112_native_safety.patch), and [DVILR sample](examples/v112_memory_safe_copy.dvl). **Go tests and Windows PE cross-build passed; actual Windows execution and full language/self-hosting are NOT yet verified.** The full updated compiler source remains in the downloadable ZIP, not the GitHub demo repository.
+
+## DVILR v1.1.3 typed scalars and memory reference preview
+
+The [v1.1.3 verification checkpoint](DVILR_V113_TYPE_MEMORY_CHECKPOINT.md) documents native `bool` / `i64` annotation checking, a Go-hosted generational-handle and owned-byte reference memory runtime, Windows cross-builds, test evidence and still-missing native runtime verification. See the [typed scalar example](examples/v113/typed_scalar_success.dvl) and [Windows test script](compiler/tests/verify-v113-windows.ps1). **The full updated compiler source is in the separate downloadable ZIP, not completely merged into GitHub; the full native type/memory system, GPU execution and self-hosting remain unfinished.**
