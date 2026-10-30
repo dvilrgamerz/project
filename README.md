@@ -42,3 +42,7 @@ The latest [v1.1 implementation checkpoint](DVILR_V11_IMPLEMENTATION_CHECKPOINT.
 ## DVILR v1.1.1 native AI score ranking (preview)
 
 New native `max_value`, `min_value`, and `argmax` over signed i64 arrays/vectors are available in the separate v1.1.1 compiler source ZIP. See [implementation checkpoint](DVILR_V111_NATIVE_AI_CHECKPOINT.md), [compiler patch](compiler/patches/v111_native_ai_ranking.diff), and [source example](examples/native_ai_rank_v111.dvl). Go tests, native PE generation and x64 disassembly checks passed; **actual Windows runtime execution and full V1.1 completion are not verified**. The full compiler remains in the downloadable ZIP, not merged into this repository.
+
+## DVILR v1.1.2 — Native memory and type-safety preview
+
+A separate full-source ZIP and unsigned Windows installer now include `checked_add`, `checked_sub`, `checked_mul` (native overflow exit 10), `copy_vector` (bounded deep copy with static vector-type checks), and zeroization for `pop`/`clear_vector`. Read the [v1.1.2 implementation checkpoint](DVILR_V112_TYPE_MEMORY_CHECKPOINT.md), [compiler source patch](compiler/patches/v112_native_safety.patch), and [DVILR sample](examples/v112_memory_safe_copy.dvl). **Go tests and Windows PE cross-build passed; actual Windows execution and full language/self-hosting are NOT yet verified.** The full updated compiler source remains in the downloadable ZIP, not the GitHub demo repository.
