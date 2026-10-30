@@ -1,0 +1,4 @@
+vector source = [1,2,3]
+vector target = []
+let offset:bool = true
+slice_vector(target,source,offset,2)
